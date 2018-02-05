@@ -1,0 +1,338 @@
+<script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var scroll = $("#ScoreBoardcontent").scrollTop();
+        var scrollHeight = 0;
+        var scrollMax = 0;
+        
+        window.addEventListener('message', function(event) {
+            //console.log(""+event.data.playerID+" "+event.data.playerName+" "+event.data.playerURL+"")
+            
+            if (event.data.type == "visi") {
+                //console.log(""+event.data.type+" "+event.data.isVisi+"")
+                if (event.data.isVisi == "true"){
+                    $("#ScoreBoardcontainer").show();
+                }else{
+                    scroll = 0;
+                    $("#ScoreBoardcontent").scrollTop(scroll);
+                    $("#ScoreBoardcontainer").hide();
+                }
+            }
+            
+            if (event.data.type == "scroll") {
+                scrollHeight = $("#ScoreBoardcontent").prop("scrollHeight");
+                scrollMax = scrollHeight - $("#ScoreBoardcontent").height();
+                //console.log("SCROLL: "+scroll+" "+event.data.dir+" "+scrollHeight+" / "+scrollMax);
+                if (event.data.dir == "down"){
+                    scroll += 300;
+                    if (scroll >= scrollMax){ scroll = scrollMax }
+                }else{
+                    scroll -= 300;
+                    if (scroll <= 0){ scroll = 0 }
+                }
+                $("#ScoreBoardcontent").animate({ scrollTop: scroll }, 200, "swing");
+                //console.log("SCROLL2: "+scroll);
+            }
+            
+            if (event.data.type == "addPlayer") {
+                if (event.data.reset == "yes") {
+                    $("#ScoreBoardcontent").html("");
+                    //console.log("I SAID TO RESET...");
+                }
+                
+                if (event.data.playerURL == "NONE"){
+                    var plyURL = "<div class=\"avPic\" style=\"height:32px;width:32px;background-color:rbga(0,0,0,0);\"></div>";
+                }else{
+                    var plyURL = "<img class=\"avPic\" src=\""+event.data.playerURL+"\">";
+                }
+                
+                var plyIDTemp = "<span style=\"color:#777;\">["+event.data.playerID+"]</span>";
+                
+                var template = "<div class=\"row userRow\">"+
+                                "<div class=\"col-1 al-center\">"+plyURL+"</div>"+
+                                "<div class=\"col-11\">"+plyIDTemp+" "+event.data.playerName+"</div>"+
+                                "</div>";
+                
+                $("#ScoreBoardcontent").append(template)
+            }
+        });
+    });
+</script>
+    
+<style>
+    
+    body{
+        margin: 0;
+        //font-family: Arial, Helvetica, sans-serif;
+        font-family: "Helvetica Neue", Helvetica,Arial, sans-serif;
+    }
+    
+    span{
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* width */
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 2px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        box-shadow: inset 0 0 2px black; 
+        background: grey; 
+        border-radius: 4px;
+    }
+    
+    .col-1 {width: 8.33%;}
+    .col-2 {width: 16.66%;}
+    .col-3 {width: 25%;}
+    .col-4 {width: 33.33%;}
+    .col-5 {width: 41.66%;}
+    .col-6 {width: 50%;}
+    .col-7 {width: 58.33%;}
+    .col-8 {width: 66.66%;}
+    .col-9 {width: 75%;}
+    .col-10 {width: 83.33%;}
+    .col-11 {width: 91.66%;}
+    .col-12 {width: 100%;}
+    
+    [class*="col-"] {
+        font-size: 18px;
+        //padding: 2px 4px;
+        margin: 0;
+        float: left;
+        //border: 1px solid red; // RED LINES FOR DEBUGGING AND SHIT
+        min-height: 31px;
+    }
+    
+    [class*="col-"] p {
+        padding: 2px 2px;
+        margin: 0;
+    }
+    
+    [class*="col-"] input[type=text], [class*="col-"] select, [class*="col-"] textarea, .ui-button {
+        width: 100%;
+        font-size: 18px;
+        padding: 0 2px;
+        margin: 0;
+        text-transform: uppercase;
+        resize: none;
+    }
+    
+    [class*="col-"] button {
+        font-size: 16px;
+        margin: 1px 0;
+        width: 100%;
+        padding: 0;
+    }
+    
+    .al-right {
+        text-align: right;
+    }
+    
+    .al-center {
+        text-align: center;
+    }
+    
+    .row::after {
+        content: "";
+        clear: both;
+        display: table;
+        margin: 0;
+        padding: 0;
+    }
+    
+    #ScoreBoardcontainer{
+        display: none;
+        border-radius: 4px;
+        height: 500px;
+        width: 500px;
+        margin: 0 auto;
+        margin-top: 100px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        overflow: hidden;
+        border: solid #000 1px;
+    }
+    
+    #ScoreBoardheader{
+        display: block;
+        background-color: rgba(20, 174, 204, 0.8);
+        font-weight: bold;
+        color: #333;
+        padding: 5px;
+        text-align: center;
+    }
+    
+    #ScoreBoardcontent{
+        display: block;
+        padding: 10px;
+        overflow-y: scroll;
+        height: 480px;
+    }
+    
+    .userRow{
+        height: 32px;
+        line-height: 32px;
+        //margin-top: 5px;
+        padding: 5px 0;
+    }
+    
+    .userRow:nth-of-type(odd){
+        background-color: rgba(255, 255, 255, 0.04);
+    }
+    
+    .avPic{
+        border: 1px solid #888;
+        margin-right: 5px;
+    }
+</style>
+
+<body>
+    <div id="ScoreBoardcontainer">
+        <!--<div id="ScoreBoardheader">
+                <div class="row">
+                    <div class="col-5">ID</div>
+                    <div class="col-5">NAME</div>
+                </div>
+        </div>-->
+        <div id="ScoreBoardcontent">
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/94/94a2536b7fba14a0b6f56fdaee3a3823fd7a6b92.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[1]</span> Briglair</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/35/35d0282b721e37ae7162de155317d3b76429e3c7.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[2]</span>  MADm0dD3r</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/1b/1bb6677181e036777ec529f2f8b8b7a69042f1fa.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[3]</span>  dennisp2938</div>
+                </div>
+                <div class="row userRow">
+                    <div class="col-1 al-center"><img class="avPic" src="http://cdn.edgecast.steamstatic.com/steamcommunity/public/images/avatars/7b/7b118d38705252930ac593c506170fed5edad3d5.jpg"></div>
+                    <div class="col-11"><span style="color:#777;">[4]</span>  Ward</div>
+                </div>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,5 @@
+AddEventHandler("playerSpawned", function(spawn)
+TriggerEvent("chatMessage", "", { 0, 0, 0 }, "Welcome to the iGTA Role Play Server")
+TriggerEvent("chatMessage", "", { 0, 0, 0 }, "Join the teamspeak 31.186.250.99:6740")
+TriggerEvent("chatMessage", "", { 0, 0, 0 }, "Join the Discord aC3nRYY")
+end)
